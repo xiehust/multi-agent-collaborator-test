@@ -1,0 +1,19 @@
+environment_variables:
+  AWS_REGION_NAME: us-west-2
+model_list:
+  - model_name: bedrock-claude-35-haiku
+    litellm_params:
+      model: bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
+      temperature: 0.2
+  - model_name: bedrock-claude-35-sonnet
+    litellm_params:
+      model: bedrock/us.anthropic.claude-3-5-sonnet-20241022-v2:0
+      temperature: 0.2
+  - model_name: bedrock-nova-lite
+    litellm_params:
+      model: bedrock/us.amazon.nova-lite-v1:0
+      temperature: 0.5
+  - model_name: bedrock-nova-pro
+    litellm_params:
+      model: bedrock/us.amazon.nova-pro-v1:0
+      temperature: 0.5
