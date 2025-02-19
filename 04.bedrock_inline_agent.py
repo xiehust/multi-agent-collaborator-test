@@ -9,33 +9,25 @@ dotenv.load_dotenv()
 
 MODELID= 'us.amazon.nova-lite-v1:0'
 # MODELID= "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
-custom_client = boto3.client('bedrock-runtime',
-                             aws_access_key_id=os.environ['ACCESS_KEY_ID'],
-                             aws_secret_access_key=os.environ['SECRET_ACCESS_KEY'],
-                             config = boto3.session.Config(
-                                 read_timeout=120,
-                                 connect_timeout=120
-                             ))
-
 action_groups_list = [
     {
         'actionGroupName': 'CodeInterpreterAction',
         'parentActionGroupSignature': 'AMAZON.CodeInterpreter',
         'description':'Use this to write and execute python code to answer questions and other tasks.'
     },
-    {
-        "actionGroupExecutor": {
-            "lambda": "arn:aws:lambda:region:0123456789012:function:my-function-name"
-        },
-        "actionGroupName": "MyActionGroupName",
-        "apiSchema": {
-            "s3": {
-                "s3BucketName": "bucket-name",
-                "s3ObjectKey": "openapi-schema.json"
-            }
-        },
-        "description": "My action group for doing a specific task"
-    }
+    # {
+    #     "actionGroupExecutor": {
+    #         "lambda": "arn:aws:lambda:region:0123456789012:function:my-function-name"
+    #     },
+    #     "actionGroupName": "MyActionGroupName",
+    #     "apiSchema": {
+    #         "s3": {
+    #             "s3BucketName": "bucket-name",
+    #             "s3ObjectKey": "openapi-schema.json"
+    #         }
+    #     },
+    #     "description": "My action group for doing a specific task"
+    # }
 ]
 
 knowledge_bases = [
@@ -52,7 +44,7 @@ knowledge_bases = [
 bedrock_inline_agent = BedrockInlineAgent(BedrockInlineAgentOptions(
     name="Inline Agent Creator for Agents for Amazon Bedrock",
     description="Specalized in creating Agent to solve customer request dynamically. You are provided with a list of Action groups and Knowledge bases which can help you in answering customer request",
-    # action_groups_list=action_groups_list,
+    action_groups_list=action_groups_list,
     client = boto3.client('bedrock-runtime'),
     bedrock_agent_client = boto3.client(
                     'bedrock-agent-runtime',
