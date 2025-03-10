@@ -19,11 +19,11 @@ import os
 import time
 dotenv.load_dotenv()
 
-# MODELID= 'us.amazon.nova-pro-v1:0'
-MODELID= "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+MODELID= 'us.amazon.nova-pro-v1:0'
+# MODELID= "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
 custom_client = boto3.client('bedrock-runtime',
-                             aws_access_key_id=os.environ['ACCESS_KEY_ID'],
-                             aws_secret_access_key=os.environ['SECRET_ACCESS_KEY'],
+                             aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+                             aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
                              config = boto3.session.Config(
                                  read_timeout=120,
                                  connect_timeout=120
@@ -198,17 +198,25 @@ async def simple_handle_request(agent, _user_input: str, _user_id: str, _session
     t1 = time.time()
     response: ConversationMessage = await agent.process_request(_user_input, _user_id, _session_id,[])
     # Print metadata
-    print("\nMetadata:")
-    print(f"Selected Agent: {response.content}")
-    print(f"Duration:{time.time()-t1}")
+    print(f"\nUSER_ID: {_user_id} Metadata:")
+    print(f"USER_ID: {_user_id} Selected Agent: {response.content}")
+    print(f"USER_ID: {_user_id} Duration:{time.time()-t1}")
 
 
 if __name__ == "__main__":
-    USER_ID = "user123"
-    SESSION_ID = str(uuid.uuid4())
-    task = "Conduct market research for TSLA stock"
+    USER_IDs = ["user1","user2"]
+    SESSION_IDs = [str(uuid.uuid4()),str(uuid.uuid4())]
+    tasks = ["Conduct market research for TSLA stock","写一篇500字小学生作文，关于春天"]
     # asyncio.run(handle_request(orchestrator, task, USER_ID, SESSION_ID))
-    asyncio.run(simple_handle_request(planner, task, USER_ID, SESSION_ID))
+    # asyncio.run(simple_handle_request(planner, task, USER_ID, SESSION_ID))
+    loop = asyncio.get_event_loop()
+    # 测试并行执行
+    loop.run_until_complete(
+        asyncio.gather(*[simple_handle_request(planner, task, u, s) for task, u, s in zip(tasks,USER_IDs,SESSION_IDs)])
+    )
+    # 关闭事件循环
+    loop.close()        
+        
 
 
 
